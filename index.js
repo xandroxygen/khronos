@@ -1,16 +1,18 @@
-const express = require("express");
-const axios = require("axios");
-
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").load();
 }
+
+const express = require("express");
+const api = require("./api");
+
+const users = {};
 
 const app = express();
 
 app.use(express.json());
 
 app.get("/", (req, res, next) => {
-  res.send("Privet Mir!");
+  res.sendFile(__dirname + "/add-to-slack.html");
 });
 
 app.post("/", async (req, res, next) => {
@@ -21,21 +23,18 @@ app.post("/", async (req, res, next) => {
   }
 
   const {
-    event: { channel, text, subtype }
+    event: { channel, text, subtype, type: eventType, user }
   } = req.body;
-  if (subtype && subtype === "bot_message") {
-    res.sendStatus(200);
-    return;
-  }
-
-  const url = "https://slack.com/api/chat.postMessage";
-  await axios.post(
-    url,
-    { channel, text },
-    {
-      headers: { Authorization: `Bearer ${process.env.AUTH_TOKEN}` }
+  console.log(req.body.event);
+  if (eventType === "message") {
+    if (subtype && subtype === "bot_message") {
+      res.sendStatus(200);
+      return;
     }
-  );
+
+    const { data } = await api.postMessage({ channel, text });
+    console.log(data);
+  }
   res.sendStatus(200);
 });
 
