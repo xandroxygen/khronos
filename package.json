@@ -1,0 +1,13 @@
+{
+  "name": "khronometr",
+  "version": "1.0.0",
+  "description": "change slack status to show your schedule",
+  "main": "index.js",
+  "author": "Xander Moffatt",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3"
+  }
+}
