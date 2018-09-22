@@ -4,6 +4,7 @@ if (process.env.NODE_ENV !== "production") {
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const scheduler = require("node-schedule");
 const api = require("./api");
 const app = express();
 
@@ -172,12 +173,16 @@ app.post("/", async (req, res, next) => {
       res.sendStatus(200);
       return;
     }
-
-    await checkStatus();
   }
   res.sendStatus(200);
 });
 
 app.listen(3000, () => {
   console.log("App listening on 3000");
+  scheduler.scheduleJob("* 0 * * * *", async () => {
+    await checkStatus();
+  });
+  scheduler.scheduleJob("* 30 * * * *", async () => {
+    await checkStatus();
+  });
 });
